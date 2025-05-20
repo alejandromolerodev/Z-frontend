@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ingresos - Zave</title>
+    <style>
+      /* Estilos del navbar IDÉNTICOS a resumen */
+      .navbar {
+        height: 90px;
+        background: linear-gradient(to right, white, #6f42c1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1030;
+        width: 100%;
+        padding: 0 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand img {
+        height: 70px;
+        margin-right: 12px;
+        transition: transform 0.3s ease;
+      }
+
+      .navbar-brand:hover img {
+        transform: scale(1.05);
+      }
+
+      .navbar-brand {
+        display: flex;
+        align-items: center;
+        background-color: transparent;
+      }
+
+      .nav-hover {
+        position: relative;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        padding: 8px 0;
+      }
+
+      .nav-hover::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #6f42c1;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-hover:hover::after {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      .text-purple {
+        color: #6f42c1 !important;
+      }
+
+      .navbar-collapse {
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .navbar-collapse.collapse:not(.show) {
+        display: none;
+      }
+
+      @media (min-width: 992px) {
+        .navbar-collapse.collapse {
+          display: flex !important;
+          flex-basis: auto;
+        }
+        .navbar-nav {
+          gap: 15px;
+        }
+      }
+
+      @media (max-width: 991.98px) {
+        .navbar {
+          padding: 15px 20px;
+        }
+        .navbar-collapse {
+          position: fixed;
+          top: 90px;
+          left: 0;
+          right: 0;
+          z-index: 1020;
+          padding: 20px;
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.98),
+            rgba(111, 66, 193, 0.98)
+          );
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          max-height: calc(100vh - 90px);
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .container {
+          padding-top: 160px;
+        }
+        .navbar-nav {
+          gap: 12px;
+          align-items: flex-start !important;
+        }
+        .nav-item {
+          margin: 8px 0 !important;
+          width: 100%;
+        }
+        .nav-link,
+        .btn {
+          width: 100%;
+          text-align: center;
+          padding: 12px 15px !important;
+          font-size: 1rem;
+          border-radius: 6px;
+        }
+        .navbar-brand img {
+          height: 60px;
+          margin-top: -8px;
+        }
+        .btn-outline-light {
+          border-width: 2px;
+        }
+      }
+
+      /* Estilos específicos de ingresos (se mantienen igual) */
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 120px 20px 20px;
+        margin-top: 100px;
+      }
+
+      .card-morada {
+        background-color: #e6ddf3 !important;
+        color: #2e1e4d;
+        border-color: #d0c0e8 !important;
+      }
+      /* Estilos adicionales para botones */
+      .btn {
+        transition: all 0.3s ease;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+
+      /* Estilos para filtros */
+      .filtros-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .btn-purple {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .btn-purple:hover {
+        background-color: #5a32a8;
+        border-color: #5a32a8;
+        transform: translateY(-2px);
+      }
+
+      /* Estilos para lista de ingresos */
+      .ingreso-card {
+        background-color: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .ingreso-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .ingreso-categoria {
+        font-weight: 600;
+        color: #2e7d32;
+        font-size: 1.1rem;
+      }
+
+      .ingreso-importe {
+        font-weight: 700;
+        color: #2e7d32;
+        font-size: 1.2rem;
+      }
+
+      .ingreso-fecha {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+      }
+
+      .ingreso-descripcion {
+        color: #495057;
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+
+      .alert-info {
+        background-color: #e3f2fd;
+        border-color: #b8daff;
+        color: #004085;
+        padding: 15px;
+        border-radius: 6px;
+      }
+
+      @media (max-width: 768px) {
+        .filtros-container {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .btn-purple {
+          width: 100%;
+        }
+
+        .ingreso-card {
+          padding: 12px;
+        }
+
+        .ingreso-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .ingreso-categoria {
+          font-size: 1rem;
+        }
+
+        .ingreso-importe {
+          font-size: 1.1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Topbar - Mejorado para coincidir exactamente con resumen -->
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 shadow-sm">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" routerLink="/resumen">
+          <img src="assets/zave.png" alt="Logo" width="80" />
+          <span class="ms-2 fs-4 fw-bold text-purple">Zave</span>
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          (click)="toggleMenu()"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+          class="navbar-collapse collapse"
+          [class.show]="!isMenuCollapsed"
+          id="navbarContent"
+        >
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item mx-2">
+              <span class="nav-link text-white fs-5 fw-semibold">
+                👤 {{ usuarioNombre || "Usuario" }}
+              </span>
+            </li>
+            <li class="nav-item mx-2">
+              <a
+                class="nav-link text-white nav-hover fs-5 fw-semibold"
+                routerLink="/ingresos"
+                (click)="isMenuCollapsed = true"
+              >
+                Ingresos
+              </a>
+            </li>
+            <li class="nav-item mx-2">
+              <a
+                class="nav-link text-white nav-hover fs-5 fw-semibold"
+                routerLink="/gastos"
+                (click)="isMenuCollapsed = true"
+              >
+                Gastos
+              </a>
+            </li>
+            <li class="nav-item mx-2">
+              <button
+                class="nav-link text-white nav-hover fs-5 fw-semibold border-0 bg-transparent p-0"
+                (click)="mostrarInfoCreador()"
+              >
+                Acerca del creador
+              </button>
+            </li>
+            <li class="nav-item mx-2">
+              <button
+                (click)="cerrarSesion()"
+                class="btn btn-outline-light btn-sm"
+              >
+                Cerrar Sesión
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido de la página (sin cambios) -->
+    <div class="container py-4">
+      <!-- Selector de Cuenta -->
+      <div class="card card-morada mb-4 p-3 shadow-sm">
+        <h2 class="h5 mb-3">Selecciona una Cuenta</h2>
+        <select
+          [(ngModel)]="selectedCuenta"
+          (ngModelChange)="onCuentaSeleccionada($event)"
+          class="form-select mb-3"
+          aria-label="Seleccionar Cuenta"
+        >
+          <option *ngFor="let cuenta of cuentas" [ngValue]="cuenta">
+            {{ cuenta.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Formulario Ingreso -->
+      <div class="card card-morada mb-4 p-3 shadow-sm">
+        <h2 class="h5 mb-3">Agregar Nuevo Ingreso</h2>
+        <form (ngSubmit)="agregarIngreso()" class="row g-3">
+          <div class="col-md-3">
+            <label for="ingresoImporte" class="form-label">Importe</label>
+            <input
+              id="ingresoImporte"
+              type="number"
+              [(ngModel)]="nuevoIngreso"
+              name="nuevoIngreso"
+              class="form-control"
+              placeholder="0.00"
+              required
+              min="0"
+              step="0.01"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label for="ingresoCategoria" class="form-label">Categoría</label>
+            <input
+              id="ingresoCategoria"
+              type="text"
+              [(ngModel)]="ingresoCategoria"
+              name="ingresoCategoria"
+              class="form-control"
+              placeholder="Categoría"
+              required
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="ingresoDescripcion" class="form-label"
+              >Descripción</label
+            >
+            <input
+              id="ingresoDescripcion"
+              type="text"
+              [(ngModel)]="ingresoDescripcion"
+              name="ingresoDescripcion"
+              class="form-control"
+              placeholder="Descripción"
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="ingresoFecha" class="form-label">Fecha</label>
+            <input
+              id="ingresoFecha"
+              type="date"
+              [(ngModel)]="ingresoFecha"
+              name="ingresoFecha"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="col-12">
+            <button type="submit" class="btn btn-success w-100">
+              Agregar Ingreso
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filtros -->
+      <div class="card card-morada mb-4 p-3 shadow-sm">
+        <h2 class="h5 mb-3">Filtrar Ingresos</h2>
+        <div class="filtros-container">
+          <button
+            (click)="ordenarPorFecha('asc')"
+            class="btn btn-purple flex-grow-1"
+          >
+            Más antiguos primero
+          </button>
+          <button
+            (click)="ordenarPorFecha('desc')"
+            class="btn btn-purple flex-grow-1"
+          >
+            Más recientes primero
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de Ingresos -->
+      <div class="card card-morada mb-4 p-3 shadow-sm">
+        <h2 class="h5 mb-3">Lista de Ingresos</h2>
+
+        <div *ngIf="ingresos.length === 0" class="alert alert-info">
+          No hay ingresos registrados para esta cuenta.
+        </div>
+
+        <div *ngFor="let ingreso of ingresos" class="card ingreso-card">
+          <div class="ingreso-header">
+            <span class="ingreso-categoria">{{ ingreso.categoria }}</span>
+            <span class="ingreso-importe"
+              >{{ ingreso.importe.toFixed(2) }}€</span
+            >
+          </div>
+          <div class="ingreso-fecha">
+            {{ ingreso.fecha | date: "dd/MM/yyyy" }}
+          </div>
+          <div *ngIf="ingreso.descripcion" class="ingreso-descripcion">
+            {{ ingreso.descripcion }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

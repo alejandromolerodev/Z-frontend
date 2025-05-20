@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Zave</title>
+    <style>
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 120px 20px 20px; /* Aumentado padding-top para navbar fijo */
+        margin-top: 100px;
+      }
+
+      .card {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      select.form-select {
+        width: 100%;
+        padding: 10px 12px;
+        margin: 10px 0;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      select.form-select:focus {
+        border-color: #6f42c1;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.2);
+      }
+
+      .alert {
+        background-color: #ffeb3b;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        border-left: 4px solid #ffc107;
+      }
+
+      .grafica-container {
+        width: 100%;
+        max-width: 500px;
+        height: 300px;
+        margin: 20px auto;
+        position: relative;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+      }
+
+      .grafica-container canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .mt-3 {
+        margin-top: 1.5rem;
+      }
+
+      /* Navbar fijo - Modificado */
+      .navbar {
+        height: 90px;
+        background: linear-gradient(to right, white, #6f42c1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1030;
+        width: 100%;
+        padding: 0 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand img {
+        height: 70px;
+        margin-right: 12px;
+        transition: transform 0.3s ease;
+      }
+
+      .navbar-brand:hover img {
+        transform: scale(1.05);
+      }
+
+      .navbar-brand {
+        display: flex;
+        align-items: center;
+        background-color: transparent;
+      }
+
+      /* Efecto de subrayado en hover */
+      .nav-hover {
+        position: relative;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        padding: 8px 0;
+      }
+
+      .nav-hover::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #6f42c1;
+        visibility: hidden;
+        transform: scaleX(0);
+        transition: all 0.3s ease-in-out;
+      }
+
+      .nav-hover:hover::after {
+        visibility: visible;
+        transform: scaleX(1);
+      }
+
+      .text-purple {
+        color: #6f42c1 !important;
+      }
+
+      .card-morada {
+        background-color: #e6ddf3 !important;
+        color: #2e1e4d;
+        border-color: #d0c0e8 !important;
+      }
+
+      /* Estilos para el menú hamburguesa - Modificado */
+      .navbar-collapse {
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .navbar-collapse.collapse:not(.show) {
+        display: none;
+      }
+
+      @media (min-width: 992px) {
+        .navbar-collapse.collapse {
+          display: flex !important;
+          flex-basis: auto;
+        }
+
+        .navbar-nav {
+          gap: 15px;
+        }
+      }
+
+      /* Estilos responsive para móvil - Modificado */
+      @media (max-width: 991.98px) {
+        .navbar {
+          padding: 15px 20px;
+        }
+
+        .navbar-collapse {
+          position: fixed;
+          top: 90px;
+          left: 0;
+          right: 0;
+          z-index: 1020;
+          padding: 20px;
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.98),
+            rgba(111, 66, 193, 0.98)
+          );
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          max-height: calc(100vh - 90px);
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .container {
+          padding-top: 160px;
+        }
+
+        .navbar-nav {
+          gap: 12px;
+          align-items: flex-start !important;
+        }
+
+        .nav-item {
+          margin: 8px 0 !important;
+          width: 100%;
+        }
+
+        .nav-link,
+        .btn {
+          width: 100%;
+          text-align: center;
+          padding: 12px 15px !important;
+          font-size: 1rem;
+          border-radius: 6px;
+        }
+
+        .navbar-brand img {
+          height: 60px;
+          margin-top: -8px;
+        }
+
+        .btn-outline-light,
+        .btn-outline-info {
+          border-width: 2px;
+        }
+      }
+
+      /* Estilos adicionales para botones */
+      .btn {
+        transition: all 0.3s ease;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+      }
+
+      .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+      }
+
+      .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 shadow-sm">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" routerLink="/resumen">
+          <img src="assets/zave.png" alt="Logo" width="80" />
+          <span class="ms-2 fs-4 fw-bold text-purple">Zave</span>
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          (click)="toggleMenu()"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+          class="navbar-collapse collapse"
+          [class.show]="!isMenuCollapsed"
+          id="navbarContent"
+        >
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item mx-2">
+              <span class="nav-link text-white fs-5 fw-semibold">
+                👤 {{ usuarioNombre || "Usuario" }}
+              </span>
+            </li>
+            <li class="nav-item mx-2">
+              <a
+                class="nav-link text-white nav-hover fs-5 fw-semibold"
+                routerLink="/ingresos"
+                (click)="isMenuCollapsed = true"
+              >
+                Ingresos
+              </a>
+            </li>
+            <li class="nav-item mx-2">
+              <a
+                class="nav-link text-white nav-hover fs-5 fw-semibold"
+                routerLink="/gastos"
+                (click)="isMenuCollapsed = true"
+              >
+                Gastos
+              </a>
+            </li>
+            <li class="nav-item mx-2">
+              <button
+                class="nav-link text-white nav-hover fs-5 fw-semibold border-0 bg-transparent p-0"
+                (click)="mostrarInfoCreador()"
+              >
+                Acerca del creador
+              </button>
+            </li>
+            <li class="nav-item mx-2">
+              <button
+                (click)="cerrarSesion()"
+                class="btn btn-outline-light btn-sm"
+              >
+                Cerrar Sesión
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-4">
+      <!-- Selector de Cuenta -->
+      <div class="card card-morada mb-4 p-3 shadow-sm">
+        <h2 class="h5 mb-3">Selecciona una Cuenta</h2>
+        <select
+          [(ngModel)]="selectedCuenta"
+          (ngModelChange)="onCuentaSeleccionada($event)"
+          class="form-select mb-3"
+          aria-label="Seleccionar Cuenta"
+        >
+          <option *ngFor="let cuenta of cuentas" [ngValue]="cuenta">
+            {{ cuenta.nombre }}
+          </option>
+        </select>
+        <button (click)="irACrearCuenta()" class="btn btn-info">
+          Crear Nueva Cuenta
+        </button>
+      </div>
+
+      <!-- Resumen Mensual -->
+      <div class="card card-morada mb-4 p-3 shadow-sm">
+        <h2 class="h5 mb-3">
+          Resumen Financiero de {{ usuarioNombre || "Cargando..." }}
+        </h2>
+        <ul class="list-unstyled mb-0">
+          <li>
+            <strong>Cuenta Seleccionada:</strong>
+            {{ selectedCuenta?.nombre || "Ninguna seleccionada" }}
+          </li>
+          <li>
+            <strong>Saldo:</strong>
+            {{ selectedCuenta?.saldo?.toFixed(2) || "0.00" }}€
+          </li>
+          <li>
+            <strong>Ingresos Totales:</strong> {{ ingresosTotales.toFixed(2) }}€
+          </li>
+          <li>
+            <strong>Gastos Totales:</strong> {{ gastosTotales.toFixed(2) }}€
+          </li>
+          <li>
+            <strong>Ahorro Mensual:</strong> {{ ahorroMensual.toFixed(2) }}€
+          </li>
+          <li>
+            <strong>Porcentaje de Ahorro:</strong>
+            {{ porcentajeAhorro.toFixed(2) }}%
+          </li>
+        </ul>
+
+        <div *ngIf="alertas.length > 0" class="alert alert-warning mt-3 p-2">
+          <h3 class="h6 mb-2">Alertas:</h3>
+          <ul class="mb-0">
+            <li *ngFor="let alerta of alertas">{{ alerta }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Gráfico -->
+      <div class="card card-morada mb-4 p-3 shadow-sm">
+        <h2 class="h5 mb-3">Gráfico Resumen</h2>
+        <button (click)="cambiarTipoGrafica()" class="btn btn-primary mb-3">
+          Cambiar Tipo de Gráfica
+        </button>
+        <div class="grafica-container">
+          <canvas id="graficaResumen"></canvas>
+        </div>
+      </div>
+
+      <!-- Formulario Ingreso -->
+      <div
+        *ngIf="mostrarFormularioIngreso"
+        class="card p-3 card-morada mb-4 shadow-sm"
+      >
+        <h3 class="h6 mb-3">Agregar Ingreso</h3>
+        <form (ngSubmit)="agregarIngreso()" class="row g-3">
+          <div class="col-md-3">
+            <label for="ingresoImporte" class="form-label">Importe</label>
+            <input
+              id="ingresoImporte"
+              type="number"
+              [(ngModel)]="nuevoIngreso"
+              name="nuevoIngreso"
+              class="form-control"
+              placeholder="0.00"
+              required
+              min="0"
+              step="0.01"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label for="ingresoCategoria" class="form-label">Categoría</label>
+            <input
+              id="ingresoCategoria"
+              type="text"
+              [(ngModel)]="ingresoCategoria"
+              name="ingresoCategoria"
+              class="form-control"
+              placeholder="Categoría"
+              required
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="ingresoDescripcion" class="form-label"
+              >Descripción</label
+            >
+            <input
+              id="ingresoDescripcion"
+              type="text"
+              [(ngModel)]="ingresoDescripcion"
+              name="ingresoDescripcion"
+              class="form-control"
+              placeholder="Descripción"
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="ingresoFecha" class="form-label">Fecha</label>
+            <input
+              id="ingresoFecha"
+              type="date"
+              [(ngModel)]="ingresoFecha"
+              name="ingresoFecha"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="col-12 d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">
+              Agregar Ingreso
+            </button>
+            <button
+              type="button"
+              (click)="toggleFormularioIngreso()"
+              class="btn btn-secondary"
+            >
+              Cerrar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Formulario Gasto -->
+      <div
+        *ngIf="mostrarFormularioGasto"
+        class="card p-3 card-morada mb-4 shadow-sm"
+      >
+        <h3 class="h6 mb-3">Agregar Gasto</h3>
+        <form (ngSubmit)="agregarGasto()" class="row g-3">
+          <div class="col-md-3">
+            <label for="gastoImporte" class="form-label">Importe</label>
+            <input
+              id="gastoImporte"
+              type="number"
+              [(ngModel)]="nuevoGasto"
+              name="nuevoGasto"
+              class="form-control"
+              placeholder="0.00"
+              required
+              min="0"
+              step="0.01"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label for="gastoCategoria" class="form-label">Categoría</label>
+            <input
+              id="gastoCategoria"
+              type="text"
+              [(ngModel)]="gastoCategoria"
+              name="gastoCategoria"
+              class="form-control"
+              placeholder="Categoría"
+              required
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="gastoDescripcion" class="form-label">Descripción</label>
+            <input
+              id="gastoDescripcion"
+              type="text"
+              [(ngModel)]="gastoDescripcion"
+              name="gastoDescripcion"
+              class="form-control"
+              placeholder="Descripción"
+            />
+          </div>
+
+          <div class="col-md-2">
+            <label for="gastoFecha" class="form-label">Fecha</label>
+            <input
+              id="gastoFecha"
+              type="date"
+              [(ngModel)]="gastoFecha"
+              name="gastoFecha"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="col-12 d-flex justify-content-between">
+            <button type="submit" class="btn btn-danger">Agregar Gasto</button>
+            <button
+              type="button"
+              (click)="toggleFormularioGasto()"
+              class="btn btn-secondary"
+            >
+              Cerrar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Botones para mostrar formularios -->
+      <div class="card p-3 card-morada shadow-sm">
+        <div class="d-flex gap-2">
+          <button
+            (click)="toggleFormularioIngreso()"
+            class="btn btn-success w-50"
+          >
+            Agregar Ingreso
+          </button>
+          <button (click)="toggleFormularioGasto()" class="btn btn-danger w-50">
+            Agregar Gasto
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
