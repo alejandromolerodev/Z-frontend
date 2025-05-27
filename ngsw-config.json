@@ -8,6 +8,7 @@
       "resources": {
         "files": [
           "/favicon.ico",
+          "/index.csr.html",
           "/index.html",
           "/manifest.webmanifest",
           "/*.css",
@@ -21,34 +22,9 @@
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/**/*.svg",
-          "/**/*.cur",
-          "/**/*.jpg",
-          "/**/*.jpeg",
-          "/**/*.png",
-          "/**/*.apng",
-          "/**/*.webp",
-          "/**/*.avif",
-          "/**/*.gif",
-          "/**/*.otf",
-          "/**/*.ttf",
-          "/**/*.woff",
-          "/**/*.woff2"
+          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
       }
     }
-  ],
-  "dataGroups": [
-    {
-      "name": "api-data",
-      "urls": ["https://z-backend-production-853e.up.railway.app/api/**"],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxSize": 100,
-        "maxAge": "1d",
-        "timeout": "10s"
-      }
-    }
-  ],
-  "navigationUrls": ["/**", "!/api/**", "!/assets/**", "!/*.js", "!/*.css"]
+  ]
 }

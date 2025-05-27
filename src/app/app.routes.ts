@@ -13,4 +13,5 @@ export const routes: Routes = [
   { path: "gastos", component: GastosComponent, canActivate: [AuthGuard] },
   { path: "", redirectTo: "login", pathMatch: "full" },
   { path: "crear-cuenta", component: CrearCuentaComponent },
+  { path: "**", redirectTo: "login" },
 ];

@@ -6,7 +6,7 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class CuentaService {
-  private apiUrl = "https://zave.up.railway.app/api/zave/cuenta";
+  private apiUrl = "http://192.168.1.28:8080/api/zave/cuenta";
 
   constructor(private http: HttpClient) {}
 
