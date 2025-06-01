@@ -115,6 +115,13 @@ export class ResumenComponent implements OnInit {
           );
         }
 
+        // Nueva alerta por gasto excesivo
+        if (this.nuevoGasto > this.ingresosTotales * 0.3) {
+          this.alertas.push(
+            "Atención: Este gasto supera el 30% de tus ingresos totales y puede afectar tu presupuesto.",
+          );
+        }
+
         this.dibujarGrafica();
       },
       (error) => {
