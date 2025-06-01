@@ -7,9 +7,10 @@
     <style>
       .container {
         max-width: 900px;
-        margin: 0 auto;
-        padding: 120px 20px 20px; /* Aumentado padding-top para navbar fijo */
-        margin-top: 100px;
+        margin: 90px auto 20px;
+        padding: 20px;
+        overflow-y: auto;
+        height: calc(100vh - 110px);
       }
 
       .card {
@@ -69,7 +70,7 @@
         margin-top: 1.5rem;
       }
 
-      /* Navbar fijo - Modificado */
+      /* Navbar corregido */
       .navbar {
         height: 90px;
         background: linear-gradient(to right, white, #6f42c1);
@@ -156,7 +157,7 @@
         }
       }
 
-      /* Estilos responsive para móvil - Modificado */
+      /* Estilos responsive para móvil - Corregidos */
       @media (max-width: 991.98px) {
         .navbar {
           padding: 15px 20px;
@@ -181,7 +182,9 @@
         }
 
         .container {
-          padding-top: 160px;
+          margin-top: 90px;
+          padding-top: 20px;
+          height: calc(100vh - 90px);
         }
 
         .navbar-nav {
@@ -204,13 +207,14 @@
         }
 
         .navbar-brand img {
-          height: 60px;
+          height: 70px;
           margin-top: -8px;
         }
 
         .btn-outline-light,
         .btn-outline-info {
           border-width: 2px;
+          margin-top: 10px;
         }
       }
 
@@ -240,6 +244,12 @@
         background-color: #17a2b8;
         border-color: #17a2b8;
       }
+
+      /* Asegurar que el body permita scroll */
+      body {
+        overflow-y: auto;
+        min-height: 100vh;
+      }
     </style>
   </head>
   <body>
@@ -267,10 +277,9 @@
           id="navbarContent"
         >
           <ul class="navbar-nav ms-auto align-items-center">
-            <li class="nav-item mx-2">
-              <span class="nav-link text-white fs-5 fw-semibold">
-                👤 {{ usuarioNombre || "Usuario" }}
-              </span>
+            <!-- Reemplaza el li del dropdown con este código -->
+            <li class="nav-link text-white nav-hover fs-5 fw-semibold">
+              👤 {{ usuarioNombre || "Usuario" }}
             </li>
             <li class="nav-item mx-2">
               <a
@@ -306,6 +315,9 @@
                 Cerrar Sesión
               </button>
             </li>
+            <button (click)="deleteUser()" class="btn btn-outline-light btn-sm">
+              Eliminar Usuario
+            </button>
           </ul>
         </div>
       </div>
@@ -325,9 +337,20 @@
             {{ cuenta.nombre }}
           </option>
         </select>
-        <button (click)="irACrearCuenta()" class="btn btn-info">
-          Crear Nueva Cuenta
-        </button>
+
+        <div class="d-flex gap-2">
+          <button (click)="irACrearCuenta()" class="btn btn-info">
+            Crear Nueva Cuenta
+          </button>
+          <button
+            (click)="eliminarCuenta(selectedCuenta.id)"
+            class="btn btn-outline-danger"
+            [disabled]="!selectedCuenta"
+            title="Eliminar la cuenta seleccionada"
+          >
+            Eliminar Cuenta
+          </button>
+        </div>
       </div>
 
       <!-- Resumen Mensual -->

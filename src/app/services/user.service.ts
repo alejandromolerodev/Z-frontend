@@ -6,7 +6,7 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class UserService {
-  private apiUrl = "http://192.168.1.28:8080/api/zave/user"; // URL del backend
+  private apiUrl = "http://192.168.1.29:8080/api/zave/user"; // URL del backend
 
   constructor(private http: HttpClient) {}
 
@@ -45,5 +45,10 @@ export class UserService {
     return this.http.get(`${this.apiUrl}/username/${userId}`, {
       responseType: "text",
     });
+  }
+
+  // En user.service.ts
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/id/${userId}`);
   }
 }

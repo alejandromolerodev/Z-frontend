@@ -25,6 +25,7 @@ export class ResumenComponent implements OnInit {
   porcentajeAhorro: number = 0;
   alertas: string[] = [];
   tipoGrafica: "doughnut" | "bar" = "doughnut";
+  showUserDropdown = false;
 
   cuentas: any[] = [];
   selectedCuenta: any = null;
@@ -319,8 +320,79 @@ export class ResumenComponent implements OnInit {
 
   mostrarInfoCreador(): void {
     alert(
-      "👨‍💻 Nombre: Alejandro Molero Torres\n📅 Fecha de creación: 6 de junio de 2025\n\nGracias por utilizar esta plataforma de gestión financiera.",
+      "👨‍💻 Nombre: Alejandro Molero Torres\n📅 Fecha de creación: 6 de junio de 2025\n\nGracias por utilizar esta plataforma de gestión financiera.\n\nGithub: https://github.com/alejandromolerodev/README.git",
     );
+  }
+
+  deleteUser(): void {
+    try {
+      const userId = parseInt(localStorage.getItem("userId") || "0", 10);
+
+      if (!userId || userId === 0) {
+        throw new Error("ID de usuario no válido");
+      }
+
+      const confirmacion = confirm(
+        "¿Estás seguro que quieres eliminar tu cuenta permanentemente?\nEsta acción no se puede deshacer.",
+      );
+
+      if (confirmacion) {
+        this.userService.deleteUser(userId).subscribe({
+          next: () => {
+            this.authService.logout();
+            localStorage.clear(); // Limpia todo el localStorage por seguridad
+            this.router.navigate(["/login"]);
+          },
+          error: (err) => {
+            console.error("Error al eliminar la cuenta:", err);
+            alert(
+              `Error al eliminar la cuenta: ${err.message || "Error desconocido"}`,
+            );
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error en deleteUser:", error);
+      alert("Ocurrió un error al procesar la solicitud");
+    }
+  }
+
+  eliminarCuenta(cuentaId: number): void {
+    if (
+      confirm(
+        "¿Estás seguro que quieres eliminar esta cuenta? Esta acción no se puede deshacer.",
+      )
+    ) {
+      this.cuentaService.eliminarCuenta(cuentaId).subscribe({
+        next: () => {
+          // Actualizar la lista después de eliminar
+          this.cuentas = this.cuentas.filter(
+            (cuenta) => cuenta.id !== cuentaId,
+          );
+
+          // Si la cuenta eliminada era la seleccionada, limpiar selección o seleccionar otra
+          if (this.selectedCuenta && this.selectedCuenta.id === cuentaId) {
+            this.selectedCuenta =
+              this.cuentas.length > 0 ? this.cuentas[0] : null;
+            if (this.selectedCuenta) {
+              this.cargarIngresosYGastos(this.selectedCuenta.id);
+            } else {
+              // Limpiar totales o hacer algo si no hay cuentas
+              this.ingresosTotales = 0;
+              this.gastosTotales = 0;
+              this.saldo = 0;
+              this.ahorroMensual = 0;
+              this.porcentajeAhorro = 0;
+              this.chart?.destroy();
+            }
+          }
+        },
+        error: (err) => {
+          console.error("Error al eliminar la cuenta", err);
+          alert("No se pudo eliminar la cuenta. Intenta más tarde.");
+        },
+      });
+    }
   }
 
   toggleMenu() {

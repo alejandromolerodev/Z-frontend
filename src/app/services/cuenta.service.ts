@@ -6,7 +6,7 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class CuentaService {
-  private apiUrl = "http://192.168.1.28:8080/api/zave/cuenta";
+  private apiUrl = "http://192.168.1.29:8080/api/zave/cuenta";
 
   constructor(private http: HttpClient) {}
 
@@ -58,5 +58,10 @@ export class CuentaService {
   // Crear una nueva cuenta asociada a un usuario
   crearCuenta(userId: number, cuentaData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/usuario/${userId}`, cuentaData);
+  }
+
+  // Eliminar cuenta
+  eliminarCuenta(cuentaId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${cuentaId}`);
   }
 }

@@ -83,61 +83,18 @@
         }
       }
 
-      @media (max-width: 991.98px) {
-        .navbar {
-          padding: 15px 20px;
-        }
-        .navbar-collapse {
-          position: fixed;
-          top: 90px;
-          left: 0;
-          right: 0;
-          z-index: 1020;
-          padding: 20px;
-          background: linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0.98),
-            rgba(111, 66, 193, 0.98)
-          );
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-          max-height: calc(100vh - 90px);
-          overflow-y: auto;
-          -webkit-overflow-scrolling: touch;
-        }
-        .container {
-          padding-top: 160px;
-        }
-        .navbar-nav {
-          gap: 12px;
-          align-items: flex-start !important;
-        }
-        .nav-item {
-          margin: 8px 0 !important;
-          width: 100%;
-        }
-        .nav-link,
-        .btn {
-          width: 100%;
-          text-align: center;
-          padding: 12px 15px !important;
-          font-size: 1rem;
-          border-radius: 6px;
-        }
-        .navbar-brand img {
-          height: 60px;
-          margin-top: -8px;
-        }
-        .btn-outline-light {
-          border-width: 2px;
-        }
+      /* Estilos específicos de gastos CORREGIDOS */
+      body {
+        overflow-y: auto;
+        min-height: 100vh;
       }
 
-      /* Estilos específicos de gastos */
       .container {
         max-width: 900px;
-        margin: 0 auto;
-        padding: 120px 20px 20px;
-        margin-top: 100px;
+        margin: 90px auto 20px;
+        padding: 20px;
+        overflow-y: auto;
+        height: calc(100vh - 110px);
       }
 
       .card-morada {
@@ -222,32 +179,68 @@
         border-radius: 6px;
       }
 
-      @media (max-width: 768px) {
-        .filtros-container {
-          flex-direction: column;
-          gap: 10px;
+      /* Estilos responsive para móvil - CORREGIDOS */
+      @media (max-width: 991.98px) {
+        .navbar {
+          padding: 15px 20px;
         }
 
-        .btn-purple {
+        .navbar-collapse {
+          position: fixed;
+          top: 90px;
+          left: 0;
+          right: 0;
+          z-index: 1020;
+          padding: 20px;
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.98),
+            rgba(111, 66, 193, 0.98)
+          );
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          max-height: calc(100vh - 90px);
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .container {
+          margin-top: 90px;
+          padding-top: 20px;
+          height: calc(100vh - 90px);
+        }
+
+        .navbar-nav {
+          gap: 12px;
+          align-items: flex-start !important;
+        }
+
+        .nav-item {
+          margin: 8px 0 !important;
           width: 100%;
         }
 
-        .gasto-card {
-          padding: 12px;
-        }
-
-        .gasto-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 8px;
-        }
-
-        .gasto-categoria {
+        .nav-link,
+        .btn {
+          width: 100%;
+          text-align: center;
+          padding: 12px 15px !important;
           font-size: 1rem;
+          border-radius: 6px;
         }
 
-        .gasto-importe {
-          font-size: 1.1rem;
+        .navbar-brand img {
+          height: 70px;
+          margin-top: -8px;
+        }
+
+        .btn-outline-light,
+        .btn-outline-info {
+          border-width: 2px;
+        }
+
+        .filtros-container {
+          flex-direction: column;
+          gap: 10px;
         }
       }
     </style>
@@ -316,6 +309,9 @@
                 Cerrar Sesión
               </button>
             </li>
+            <button (click)="deleteUser()" class="btn btn-outline-light btn-sm">
+              Eliminar Usuario
+            </button>
           </ul>
         </div>
       </div>
