@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "http-server dist/frontend -p 4200 -a 0.0.0.0",
+    "start": "http-server dist/frontend/browser -p $PORT -a 0.0.0.0",
     "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
