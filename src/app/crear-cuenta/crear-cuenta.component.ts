@@ -29,6 +29,7 @@ export class CrearCuentaComponent implements OnInit {
   usuarioNombre: string = "";
   cuentasExistentes: any[] = [];
   cuentaSeleccionadaId: number | null = null;
+  menuOpen = false;
 
   constructor(
     private cuentaService: CuentaService,
@@ -119,7 +120,7 @@ export class CrearCuentaComponent implements OnInit {
   }
 
   toggleMenu() {
-    this.isMenuCollapsed = !this.isMenuCollapsed;
+    this.menuOpen = !this.menuOpen;
   }
 
   cerrarSesion(): void {

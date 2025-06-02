@@ -157,8 +157,51 @@
         }
       }
 
+      .custom-toggler {
+        border: none;
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        padding: 10px;
+      }
+
+      /* Barras del toggler */
+      .toggler-bar {
+        width: 28px;
+        height: 3px;
+        background-color: #6f42c1; /* Color morado original */
+        border-radius: 2px;
+        transition: all 0.3s ease;
+        transform-origin: center;
+        display: none;
+      }
+
+      /* Cambiar color y añadir brillo en hover (normal o activo) */
+      .custom-toggler:hover .toggler-bar,
+      .custom-toggler.is-active .toggler-bar {
+        background-color: white;
+        filter: drop-shadow(0 0 5px white);
+      }
+
+      /* Animaciones para la X cuando está activo */
+      .custom-toggler.is-active .bar1 {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+
+      .custom-toggler.is-active .bar2 {
+        opacity: 0;
+      }
+
+      .custom-toggler.is-active .bar3 {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
       /* Estilos responsive para móvil - Corregidos */
       @media (max-width: 991.98px) {
+        .toggler-bar {
+          display: flex;
+        }
         .navbar {
           padding: 15px 20px;
         }
@@ -211,10 +254,14 @@
           margin-top: -8px;
         }
 
-        .btn-outline-light,
-        .btn-outline-info {
+        .btn-outline-info,
+        .btn-outline-danger,
+        .btn-success,
+        .btn-danger,
+        .btn-secondary {
           border-width: 2px;
-          margin-top: 10px;
+          margin-top: 5px;
+          height: 50px;
         }
       }
 
@@ -236,8 +283,8 @@
       }
 
       .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
+        background-color: #6f42c1;
+        border-color: #6f42c1;
       }
 
       .btn-info {
@@ -249,6 +296,44 @@
       body {
         overflow-y: auto;
         min-height: 100vh;
+      }
+
+      /* Efecto brillante en botones y links del menú */
+      .nav-link.nav-hover,
+      .btn {
+        transition:
+          all 0.3s ease,
+          filter 0.3s ease;
+      }
+
+      .nav-link.nav-hover:hover,
+      .nav-link.nav-hover:focus,
+      .btn:hover,
+      .btn:focus {
+        filter: drop-shadow(0 0 5px white);
+        color: white !important;
+        text-shadow: 0 0 5px white;
+      }
+
+      /* Para que el color no cambie en modo activo, si quieres */
+      .nav-link.nav-hover.is-active,
+      .btn.is-active {
+        filter: drop-shadow(0 0 5px white);
+        color: white !important;
+        text-shadow: 0 0 5px white;
+      }
+
+      .btn-outline-light {
+        background-color: transparent !important;
+        color: white !important;
+        border-color: white !important;
+      }
+
+      .btn-outline-light:hover,
+      .btn-outline-light:focus {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-color: white !important;
       }
     </style>
   </head>
@@ -262,18 +347,20 @@
         </a>
 
         <button
-          class="navbar-toggler"
+          class="navbar-toggler custom-toggler"
           type="button"
+          [class.is-active]="menuOpen"
           (click)="toggleMenu()"
-          aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon"></span>
+          <span class="toggler-bar bar1"></span>
+          <span class="toggler-bar bar2"></span>
+          <span class="toggler-bar bar3"></span>
         </button>
 
         <div
           class="navbar-collapse collapse"
-          [class.show]="!isMenuCollapsed"
+          [class.show]="menuOpen"
           id="navbarContent"
         >
           <ul class="navbar-nav ms-auto align-items-center">
@@ -344,7 +431,7 @@
             class="btn btn-outline-info"
             [disabled]="!selectedCuenta"
           >
-            Crear / Editar Cuenta
+            Crear Cuenta
           </button>
           <button
             (click)="eliminarCuenta(selectedCuenta.id)"
@@ -501,7 +588,7 @@
             </div>
           </div>
 
-          <div class="col-12 d-flex justify-content-between">
+          <div class="d-flex gap-2">
             <button
               type="submit"
               class="btn btn-success"
@@ -614,7 +701,7 @@
             </div>
           </div>
 
-          <div class="col-12 d-flex justify-content-between">
+          <div class="d-flex gap-2">
             <button
               type="submit"
               class="btn btn-danger"

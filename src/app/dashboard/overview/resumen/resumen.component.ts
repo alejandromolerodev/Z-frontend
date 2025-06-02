@@ -26,6 +26,7 @@ export class ResumenComponent implements OnInit {
   alertas: string[] = [];
   tipoGrafica: "doughnut" | "bar" = "doughnut";
   showUserDropdown = false;
+  menuOpen = false;
 
   cuentas: any[] = [];
   selectedCuenta: any = null;
@@ -425,6 +426,6 @@ export class ResumenComponent implements OnInit {
   }
 
   toggleMenu() {
-    this.isMenuCollapsed = !this.isMenuCollapsed;
+    this.menuOpen = !this.menuOpen;
   }
 }

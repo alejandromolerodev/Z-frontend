@@ -242,6 +242,44 @@
           gap: 10px;
         }
       }
+
+      /* Efecto brillante en botones y links del menú */
+      .nav-link.nav-hover,
+      .btn {
+        transition:
+          all 0.3s ease,
+          filter 0.3s ease;
+      }
+
+      .nav-link.nav-hover:hover,
+      .nav-link.nav-hover:focus,
+      .btn:hover,
+      .btn:focus {
+        filter: drop-shadow(0 0 5px white);
+        color: white !important;
+        text-shadow: 0 0 5px white;
+      }
+
+      /* Para que el color no cambie en modo activo, si quieres */
+      .nav-link.nav-hover.is-active,
+      .btn.is-active {
+        filter: drop-shadow(0 0 5px white);
+        color: white !important;
+        text-shadow: 0 0 5px white;
+      }
+
+      .btn-outline-light {
+        background-color: transparent !important;
+        color: white !important;
+        border-color: white !important;
+      }
+
+      .btn-outline-light:hover,
+      .btn-outline-light:focus {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-color: white !important;
+      }
     </style>
   </head>
   <body>
