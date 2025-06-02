@@ -6,7 +6,7 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class UserService {
-  private apiUrl = "http://192.168.1.29:8080/api/zave/user"; // URL del backend
+  private apiUrl = "http://localhost:8080/api/zave/user"; // URL del backend
 
   constructor(private http: HttpClient) {}
 

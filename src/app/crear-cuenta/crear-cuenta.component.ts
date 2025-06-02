@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { CuentaService } from "../services/cuenta.service";
 import { AuthService } from "../services/auth.service"; // Necesario para logout
 import { UserService } from "../services/user.service"; // Necesario para deleteUser
@@ -9,7 +9,7 @@ import { UserService } from "../services/user.service"; // Necesario para delete
 @Component({
   selector: "app-crear-cuenta",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: "./crear-cuenta.component.html",
 })
 export class CrearCuentaComponent {
