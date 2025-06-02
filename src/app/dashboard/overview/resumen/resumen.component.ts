@@ -31,17 +31,20 @@ export class ResumenComponent implements OnInit {
   selectedCuenta: any = null;
   chart: any = null;
 
-  // Campos para ingreso
-  nuevoIngreso: number = 0;
-  ingresoCategoria: string = "";
-  ingresoDescripcion: string = "";
-  ingresoFecha: string = "";
+  // Nuevo ingreso y gasto como objetos
+  nuevoIngreso = {
+    importe: 0,
+    categoria: "",
+    descripcion: "",
+    fecha: "",
+  };
 
-  // Campos para gasto
-  nuevoGasto: number = 0;
-  gastoCategoria: string = "";
-  gastoDescripcion: string = "";
-  gastoFecha: string = "";
+  nuevoGasto = {
+    importe: 0,
+    categoria: "",
+    descripcion: "",
+    fecha: "",
+  };
 
   mostrarFormularioIngreso: boolean = false;
   mostrarFormularioGasto: boolean = false;
@@ -109,19 +112,7 @@ export class ResumenComponent implements OnInit {
             ? (this.ahorroMensual / this.ingresosTotales) * 100
             : 0;
 
-        this.alertas = [];
-        if (this.porcentajeAhorro < 20) {
-          this.alertas.push(
-            "Cuidado, tu porcentaje de ahorro está por debajo del 20% recomendado.",
-          );
-        }
-
-        // Nueva alerta por gasto excesivo
-        if (this.nuevoGasto > this.ingresosTotales * 0.3) {
-          this.alertas.push(
-            "Atención: Este gasto supera el 30% de tus ingresos totales y puede afectar tu presupuesto.",
-          );
-        }
+        this.actualizarAlertas();
 
         this.dibujarGrafica();
       },
@@ -129,6 +120,62 @@ export class ResumenComponent implements OnInit {
         console.error("Error al obtener ingresos o gastos", error);
       },
     );
+  }
+
+  actualizarAlertas(): void {
+    this.alertas = [];
+
+    // Alerta 1: Porcentaje de ahorro bajo
+    if (this.porcentajeAhorro < 20) {
+      this.alertas.push(
+        "Cuidado, tu porcentaje de ahorro está por debajo del 20% recomendado.",
+      );
+    }
+
+    // Alerta 2: Gasto excesivo al agregar nuevo gasto (usamos nuevoGasto.importe)
+    if (this.nuevoGasto.importe > this.ingresosTotales * 0.3) {
+      this.alertas.push(
+        "Atención: Este gasto supera el 30% de tus ingresos totales y puede afectar tu presupuesto.",
+      );
+    }
+
+    // Alerta 3: Cuenta vacía
+    if (this.saldo === 0) {
+      this.alertas.push(
+        "Tu cuenta está vacía. Considera añadir ingresos para mantener un balance saludable.",
+      );
+    }
+
+    // Alerta 4: Saldo bajo (menos del 10% de ingresos)
+    if (this.saldo > 0 && this.saldo < this.ingresosTotales * 0.1) {
+      this.alertas.push(
+        "Tu saldo es menor al 10% de tus ingresos totales. Ten cuidado con tus gastos.",
+      );
+    }
+
+    // Alerta 5: Gastos muy altos respecto a ingresos (>90%)
+    if (
+      this.ingresosTotales > 0 &&
+      this.gastosTotales / this.ingresosTotales > 0.9
+    ) {
+      this.alertas.push(
+        "Tus gastos están muy cerca de tus ingresos totales. Intenta reducirlos para aumentar tu ahorro.",
+      );
+    }
+
+    // Alerta 6: Ahorro mensual negativo
+    if (this.ahorroMensual < 0) {
+      this.alertas.push(
+        "Estás gastando más de lo que ingresas. Esto puede afectar tu salud financiera.",
+      );
+    }
+
+    // Alerta 7: Nuevo gasto muy grande respecto al saldo actual (>50%)
+    if (this.nuevoGasto.importe > this.saldo * 0.5) {
+      this.alertas.push(
+        "El gasto que quieres agregar es mayor al 50% del saldo actual. Piensa si es necesario.",
+      );
+    }
   }
 
   dibujarGrafica(): void {
@@ -219,40 +266,33 @@ export class ResumenComponent implements OnInit {
   agregarGasto(): void {
     if (
       this.selectedCuenta &&
-      this.nuevoGasto > 0 &&
-      this.gastoCategoria &&
-      this.gastoDescripcion &&
-      this.gastoFecha
+      this.nuevoGasto.importe > 0 &&
+      this.nuevoGasto.categoria &&
+      this.nuevoGasto.descripcion &&
+      this.nuevoGasto.fecha
     ) {
-      const gastoData = {
-        importe: this.nuevoGasto,
-        categoria: this.gastoCategoria,
-        descripcion: this.gastoDescripcion,
-        fecha: this.gastoFecha,
-      };
+      const gastoData = { ...this.nuevoGasto };
 
       this.cuentaService
         .agregarGasto(this.selectedCuenta.id, gastoData)
         .subscribe(
           () => {
             this.actualizarSaldo(this.selectedCuenta.id);
-            this.gastosTotales += this.nuevoGasto;
+            this.gastosTotales += this.nuevoGasto.importe;
             this.ahorroMensual = this.ingresosTotales - this.gastosTotales;
             this.porcentajeAhorro =
               this.ingresosTotales > 0
                 ? (this.ahorroMensual / this.ingresosTotales) * 100
                 : 0;
-            this.alertas = [];
-            if (this.porcentajeAhorro < 20) {
-              this.alertas.push(
-                "Cuidado, tu porcentaje de ahorro está por debajo del 20% recomendado.",
-              );
-            }
+            this.actualizarAlertas();
 
-            this.nuevoGasto = 0;
-            this.gastoCategoria = "";
-            this.gastoDescripcion = "";
-            this.gastoFecha = "";
+            // Limpiar formulario gasto
+            this.nuevoGasto = {
+              importe: 0,
+              categoria: "",
+              descripcion: "",
+              fecha: "",
+            };
             this.toggleFormularioGasto();
           },
           (error) => console.error("Error al agregar gasto", error),
@@ -263,40 +303,33 @@ export class ResumenComponent implements OnInit {
   agregarIngreso(): void {
     if (
       this.selectedCuenta &&
-      this.nuevoIngreso > 0 &&
-      this.ingresoCategoria &&
-      this.ingresoDescripcion &&
-      this.ingresoFecha
+      this.nuevoIngreso.importe > 0 &&
+      this.nuevoIngreso.categoria &&
+      this.nuevoIngreso.descripcion &&
+      this.nuevoIngreso.fecha
     ) {
-      const ingresoData = {
-        importe: this.nuevoIngreso,
-        categoria: this.ingresoCategoria,
-        descripcion: this.ingresoDescripcion,
-        fecha: this.ingresoFecha,
-      };
+      const ingresoData = { ...this.nuevoIngreso };
 
       this.cuentaService
         .agregarIngreso(this.selectedCuenta.id, ingresoData)
         .subscribe(
           () => {
             this.actualizarSaldo(this.selectedCuenta.id);
-            this.ingresosTotales += this.nuevoIngreso;
+            this.ingresosTotales += this.nuevoIngreso.importe;
             this.ahorroMensual = this.ingresosTotales - this.gastosTotales;
             this.porcentajeAhorro =
               this.ingresosTotales > 0
                 ? (this.ahorroMensual / this.ingresosTotales) * 100
                 : 0;
-            this.alertas = [];
-            if (this.porcentajeAhorro < 20) {
-              this.alertas.push(
-                "Cuidado, tu porcentaje de ahorro está por debajo del 20% recomendado.",
-              );
-            }
+            this.actualizarAlertas();
 
-            this.nuevoIngreso = 0;
-            this.ingresoCategoria = "";
-            this.ingresoDescripcion = "";
-            this.ingresoFecha = "";
+            // Limpiar formulario ingreso
+            this.nuevoIngreso = {
+              importe: 0,
+              categoria: "",
+              descripcion: "",
+              fecha: "",
+            };
             this.toggleFormularioIngreso();
           },
           (error) => console.error("Error al agregar ingreso", error),
@@ -311,10 +344,9 @@ export class ResumenComponent implements OnInit {
   cerrarSesion(): void {
     const confirmacion = confirm("¿Estás seguro que quieres cerrar sesión?");
     if (confirmacion) {
-      // Aquí puedes agregar la lógica para cerrar sesión, por ejemplo:
-      this.authService.logout(); // si tienes un método logout en el servicio Auth
-      localStorage.removeItem("userId"); // limpia el localStorage
-      this.router.navigate(["/login"]); // redirige al login
+      this.authService.logout();
+      localStorage.removeItem("userId");
+      this.router.navigate(["/login"]);
     }
   }
 
@@ -340,7 +372,7 @@ export class ResumenComponent implements OnInit {
         this.userService.deleteUser(userId).subscribe({
           next: () => {
             this.authService.logout();
-            localStorage.clear(); // Limpia todo el localStorage por seguridad
+            localStorage.clear();
             this.router.navigate(["/login"]);
           },
           error: (err) => {
@@ -365,19 +397,16 @@ export class ResumenComponent implements OnInit {
     ) {
       this.cuentaService.eliminarCuenta(cuentaId).subscribe({
         next: () => {
-          // Actualizar la lista después de eliminar
           this.cuentas = this.cuentas.filter(
             (cuenta) => cuenta.id !== cuentaId,
           );
 
-          // Si la cuenta eliminada era la seleccionada, limpiar selección o seleccionar otra
           if (this.selectedCuenta && this.selectedCuenta.id === cuentaId) {
             this.selectedCuenta =
               this.cuentas.length > 0 ? this.cuentas[0] : null;
             if (this.selectedCuenta) {
               this.cargarIngresosYGastos(this.selectedCuenta.id);
             } else {
-              // Limpiar totales o hacer algo si no hay cuentas
               this.ingresosTotales = 0;
               this.gastosTotales = 0;
               this.saldo = 0;

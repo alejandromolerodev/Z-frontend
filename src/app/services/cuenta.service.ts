@@ -64,4 +64,9 @@ export class CuentaService {
   eliminarCuenta(cuentaId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${cuentaId}`);
   }
+
+  // editar cuenta
+  editarCuenta(cuentaId: number, datos: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/cuentas/${cuentaId}`, datos);
+  }
 }

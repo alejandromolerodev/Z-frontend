@@ -1,10 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { CuentaService } from "../services/cuenta.service";
-import { AuthService } from "../services/auth.service"; // Necesario para logout
-import { UserService } from "../services/user.service"; // Necesario para deleteUser
+import { AuthService } from "../services/auth.service";
+import { UserService } from "../services/user.service";
 
 @Component({
   selector: "app-crear-cuenta",
@@ -12,34 +12,75 @@ import { UserService } from "../services/user.service"; // Necesario para delete
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: "./crear-cuenta.component.html",
 })
-export class CrearCuentaComponent {
-  nombre: string = "";
-  tipo: string = "";
-  saldo: number = 0;
-  isMenuCollapsed = true; // Para el menú hamburguesa
-  usuarioNombre: string = ""; // Para mostrar el nombre en el navbar
+export class CrearCuentaComponent implements OnInit {
+  crearCuentaData = {
+    nombre: "",
+    tipo: "",
+    saldo: 0,
+  };
+
+  editarCuentaData = {
+    nombre: "",
+    tipo: "",
+    saldo: 0,
+  };
+
+  isMenuCollapsed = true;
+  usuarioNombre: string = "";
+  cuentasExistentes: any[] = [];
+  cuentaSeleccionadaId: number | null = null;
 
   constructor(
     private cuentaService: CuentaService,
     private router: Router,
-    private authService: AuthService, // Inyectar AuthService
-    private userService: UserService, // Inyectar UserService
+    private authService: AuthService,
+    private userService: UserService,
   ) {
-    // Obtener nombre de usuario al inicializar
     const userId = parseInt(localStorage.getItem("userId") || "0", 10);
     if (userId) {
-      this.userService.getUserNameFromBackend(userId).subscribe(
-        (username) => {
-          this.usuarioNombre = username;
-        },
-        (error) => {
-          console.error("Error al obtener el nombre de usuario", error);
-        },
-      );
+      this.userService.getUserNameFromBackend(userId).subscribe({
+        next: (username) => (this.usuarioNombre = username),
+        error: (err) =>
+          console.error("Error al obtener el nombre de usuario", err),
+      });
     }
   }
 
-  // Método para crear cuenta (ya lo tienes)
+  ngOnInit(): void {
+    this.cargarCuentas();
+  }
+
+  cargarCuentas(): void {
+    const userId = parseInt(localStorage.getItem("userId") || "0", 10);
+    if (userId) {
+      this.cuentaService.getCuentasUsuario(userId).subscribe({
+        next: (cuentas) => {
+          this.cuentasExistentes = cuentas;
+        },
+        error: (err) => {
+          console.error("Error al cargar cuentas:", err);
+        },
+      });
+    }
+  }
+
+  onSeleccionarCuenta(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const cuentaId = parseInt(selectElement.value, 10);
+    this.cuentaSeleccionadaId = cuentaId;
+
+    const cuenta = this.cuentasExistentes.find((c) => c.id === cuentaId);
+    if (cuenta) {
+      this.editarCuentaData = {
+        nombre: cuenta.nombre,
+        tipo: cuenta.tipo,
+        saldo: cuenta.saldo,
+      };
+    } else {
+      this.editarCuentaData = { nombre: "", tipo: "", saldo: 0 };
+    }
+  }
+
   crearCuenta(): void {
     const userId = parseInt(localStorage.getItem("userId") || "0", 10);
     if (!userId) {
@@ -48,13 +89,7 @@ export class CrearCuentaComponent {
       return;
     }
 
-    const cuenta = {
-      nombre: this.nombre,
-      tipo: this.tipo,
-      saldo: this.saldo,
-    };
-
-    this.cuentaService.crearCuenta(userId, cuenta).subscribe({
+    this.cuentaService.crearCuenta(userId, this.crearCuentaData).subscribe({
       next: () => {
         alert("Cuenta creada exitosamente");
         this.router.navigate(["/resumen"]);
@@ -66,7 +101,23 @@ export class CrearCuentaComponent {
     });
   }
 
-  // Métodos para el navbar:
+  editarCuenta(): void {
+    if (!this.cuentaSeleccionadaId) return;
+
+    this.cuentaService
+      .editarCuenta(this.cuentaSeleccionadaId, this.editarCuentaData)
+      .subscribe({
+        next: () => {
+          alert("Cuenta actualizada correctamente");
+          this.router.navigate(["/resumen"]);
+        },
+        error: (err) => {
+          console.error("Error al editar cuenta", err);
+          alert("No se pudo actualizar la cuenta");
+        },
+      });
+  }
+
   toggleMenu() {
     this.isMenuCollapsed = !this.isMenuCollapsed;
   }

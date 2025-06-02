@@ -339,8 +339,12 @@
         </select>
 
         <div class="d-flex gap-2">
-          <button (click)="irACrearCuenta()" class="btn btn-info">
-            Crear Nueva Cuenta
+          <button
+            (click)="irACrearCuenta()"
+            class="btn btn-outline-info"
+            [disabled]="!selectedCuenta"
+          >
+            Crear / Editar Cuenta
           </button>
           <button
             (click)="eliminarCuenta(selectedCuenta.id)"
@@ -407,20 +411,35 @@
         class="card p-3 card-morada mb-4 shadow-sm"
       >
         <h3 class="h6 mb-3">Agregar Ingreso</h3>
-        <form (ngSubmit)="agregarIngreso()" class="row g-3">
+        <form
+          #formIngreso="ngForm"
+          (ngSubmit)="agregarIngreso()"
+          class="row g-3"
+          novalidate
+        >
           <div class="col-md-3">
             <label for="ingresoImporte" class="form-label">Importe</label>
             <input
               id="ingresoImporte"
               type="number"
-              [(ngModel)]="nuevoIngreso"
-              name="nuevoIngreso"
+              [(ngModel)]="nuevoIngreso.importe"
+              name="importe"
               class="form-control"
               placeholder="0.00"
               required
               min="0"
               step="0.01"
+              #importeIngresoCtrl="ngModel"
             />
+            <div
+              *ngIf="
+                importeIngresoCtrl.invalid &&
+                (importeIngresoCtrl.dirty || importeIngresoCtrl.touched)
+              "
+              class="text-danger small"
+            >
+              El importe es obligatorio y debe ser mayor o igual a 0.
+            </div>
           </div>
 
           <div class="col-md-3">
@@ -428,12 +447,22 @@
             <input
               id="ingresoCategoria"
               type="text"
-              [(ngModel)]="ingresoCategoria"
-              name="ingresoCategoria"
+              [(ngModel)]="nuevoIngreso.categoria"
+              name="categoria"
               class="form-control"
               placeholder="Categoría"
               required
+              #categoriaIngresoCtrl="ngModel"
             />
+            <div
+              *ngIf="
+                categoriaIngresoCtrl.invalid &&
+                (categoriaIngresoCtrl.dirty || categoriaIngresoCtrl.touched)
+              "
+              class="text-danger small"
+            >
+              La categoría es obligatoria.
+            </div>
           </div>
 
           <div class="col-md-4">
@@ -443,8 +472,8 @@
             <input
               id="ingresoDescripcion"
               type="text"
-              [(ngModel)]="ingresoDescripcion"
-              name="ingresoDescripcion"
+              [(ngModel)]="nuevoIngreso.descripcion"
+              name="descripcion"
               class="form-control"
               placeholder="Descripción"
             />
@@ -455,15 +484,29 @@
             <input
               id="ingresoFecha"
               type="date"
-              [(ngModel)]="ingresoFecha"
-              name="ingresoFecha"
+              [(ngModel)]="nuevoIngreso.fecha"
+              name="fecha"
               class="form-control"
               required
+              #fechaIngresoCtrl="ngModel"
             />
+            <div
+              *ngIf="
+                fechaIngresoCtrl.invalid &&
+                (fechaIngresoCtrl.dirty || fechaIngresoCtrl.touched)
+              "
+              class="text-danger small"
+            >
+              La fecha es obligatoria.
+            </div>
           </div>
 
           <div class="col-12 d-flex justify-content-between">
-            <button type="submit" class="btn btn-success">
+            <button
+              type="submit"
+              class="btn btn-success"
+              [disabled]="formIngreso.invalid"
+            >
               Agregar Ingreso
             </button>
             <button
@@ -483,20 +526,35 @@
         class="card p-3 card-morada mb-4 shadow-sm"
       >
         <h3 class="h6 mb-3">Agregar Gasto</h3>
-        <form (ngSubmit)="agregarGasto()" class="row g-3">
+        <form
+          #formGasto="ngForm"
+          (ngSubmit)="agregarGasto()"
+          class="row g-3"
+          novalidate
+        >
           <div class="col-md-3">
             <label for="gastoImporte" class="form-label">Importe</label>
             <input
               id="gastoImporte"
               type="number"
-              [(ngModel)]="nuevoGasto"
-              name="nuevoGasto"
+              [(ngModel)]="nuevoGasto.importe"
+              name="importe"
               class="form-control"
               placeholder="0.00"
               required
               min="0"
               step="0.01"
+              #importeGastoCtrl="ngModel"
             />
+            <div
+              *ngIf="
+                importeGastoCtrl.invalid &&
+                (importeGastoCtrl.dirty || importeGastoCtrl.touched)
+              "
+              class="text-danger small"
+            >
+              El importe es obligatorio y debe ser mayor o igual a 0.
+            </div>
           </div>
 
           <div class="col-md-3">
@@ -504,12 +562,22 @@
             <input
               id="gastoCategoria"
               type="text"
-              [(ngModel)]="gastoCategoria"
-              name="gastoCategoria"
+              [(ngModel)]="nuevoGasto.categoria"
+              name="categoria"
               class="form-control"
               placeholder="Categoría"
               required
+              #categoriaGastoCtrl="ngModel"
             />
+            <div
+              *ngIf="
+                categoriaGastoCtrl.invalid &&
+                (categoriaGastoCtrl.dirty || categoriaGastoCtrl.touched)
+              "
+              class="text-danger small"
+            >
+              La categoría es obligatoria.
+            </div>
           </div>
 
           <div class="col-md-4">
@@ -517,8 +585,8 @@
             <input
               id="gastoDescripcion"
               type="text"
-              [(ngModel)]="gastoDescripcion"
-              name="gastoDescripcion"
+              [(ngModel)]="nuevoGasto.descripcion"
+              name="descripcion"
               class="form-control"
               placeholder="Descripción"
             />
@@ -529,15 +597,31 @@
             <input
               id="gastoFecha"
               type="date"
-              [(ngModel)]="gastoFecha"
-              name="gastoFecha"
+              [(ngModel)]="nuevoGasto.fecha"
+              name="fecha"
               class="form-control"
               required
+              #fechaGastoCtrl="ngModel"
             />
+            <div
+              *ngIf="
+                fechaGastoCtrl.invalid &&
+                (fechaGastoCtrl.dirty || fechaGastoCtrl.touched)
+              "
+              class="text-danger small"
+            >
+              La fecha es obligatoria.
+            </div>
           </div>
 
           <div class="col-12 d-flex justify-content-between">
-            <button type="submit" class="btn btn-danger">Agregar Gasto</button>
+            <button
+              type="submit"
+              class="btn btn-danger"
+              [disabled]="formGasto.invalid"
+            >
+              Agregar Gasto
+            </button>
             <button
               type="button"
               (click)="toggleFormularioGasto()"
