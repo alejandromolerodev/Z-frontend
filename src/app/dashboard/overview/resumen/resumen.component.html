@@ -254,7 +254,7 @@
           margin-top: -8px;
         }
 
-        .btn-outline-info,
+        .btn-info,
         .btn-outline-danger,
         .btn-success,
         .btn-danger,
@@ -262,6 +262,7 @@
           border-width: 2px;
           margin-top: 5px;
           height: 50px;
+          font-size: 80%;
         }
       }
 
@@ -426,11 +427,7 @@
         </select>
 
         <div class="d-flex gap-2">
-          <button
-            (click)="irACrearCuenta()"
-            class="btn btn-outline-info"
-            [disabled]="!selectedCuenta"
-          >
+          <button (click)="irACrearCuenta()" class="btn btn-info">
             Crear Cuenta
           </button>
           <button

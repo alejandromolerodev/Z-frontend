@@ -6,7 +6,7 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class CuentaService {
-  private apiUrl = "http://localhost:8080/api/zave/cuenta";
+  private apiUrl = "http://192.168.1.31:8080/api/zave/cuenta";
 
   constructor(private http: HttpClient) {}
 

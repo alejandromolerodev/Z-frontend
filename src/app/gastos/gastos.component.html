@@ -179,8 +179,51 @@
         border-radius: 6px;
       }
 
-      /* Estilos responsive para móvil - CORREGIDOS */
+      .custom-toggler {
+        border: none;
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        padding: 10px;
+      }
+
+      /* Barras del toggler */
+      .toggler-bar {
+        width: 28px;
+        height: 3px;
+        background-color: #6f42c1; /* Color morado original */
+        border-radius: 2px;
+        transition: all 0.3s ease;
+        transform-origin: center;
+        display: none;
+      }
+
+      /* Cambiar color y añadir brillo en hover (normal o activo) */
+      .custom-toggler:hover .toggler-bar,
+      .custom-toggler.is-active .toggler-bar {
+        background-color: white;
+        filter: drop-shadow(0 0 5px white);
+      }
+
+      /* Animaciones para la X cuando está activo */
+      .custom-toggler.is-active .bar1 {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+
+      .custom-toggler.is-active .bar2 {
+        opacity: 0;
+      }
+
+      .custom-toggler.is-active .bar3 {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+      /* Estilos responsive para móvil - Corregidos */
       @media (max-width: 991.98px) {
+        .toggler-bar {
+          display: flex;
+        }
         .navbar {
           padding: 15px 20px;
         }
@@ -293,18 +336,20 @@
         </a>
 
         <button
-          class="navbar-toggler"
+          class="navbar-toggler custom-toggler"
           type="button"
+          [class.is-active]="menuOpen"
           (click)="toggleMenu()"
-          aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon"></span>
+          <span class="toggler-bar bar1"></span>
+          <span class="toggler-bar bar2"></span>
+          <span class="toggler-bar bar3"></span>
         </button>
 
         <div
           class="navbar-collapse collapse"
-          [class.show]="!isMenuCollapsed"
+          [class.show]="menuOpen"
           id="navbarContent"
         >
           <ul class="navbar-nav ms-auto align-items-center">

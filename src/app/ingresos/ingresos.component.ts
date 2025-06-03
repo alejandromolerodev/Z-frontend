@@ -20,6 +20,7 @@ export class IngresosComponent implements OnInit {
   selectedCuenta: any = null;
   ingresos: any[] = [];
   ordenFecha: "asc" | "desc" = "desc";
+  menuOpen = false;
 
   // Campos para ingreso
   nuevoIngreso: number = 0;
@@ -125,7 +126,7 @@ export class IngresosComponent implements OnInit {
   }
 
   toggleMenu() {
-    this.isMenuCollapsed = !this.isMenuCollapsed;
+    this.menuOpen = !this.menuOpen;
   }
 
   cerrarSesion(): void {

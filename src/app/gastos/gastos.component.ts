@@ -20,6 +20,7 @@ export class GastosComponent implements OnInit {
   selectedCuenta: any = null;
   gastos: any[] = [];
   ordenFecha: "asc" | "desc" = "desc";
+  menuOpen = false;
 
   // Campos para gasto
   nuevoGasto: number = 0;
@@ -125,7 +126,7 @@ export class GastosComponent implements OnInit {
   }
 
   toggleMenu() {
-    this.isMenuCollapsed = !this.isMenuCollapsed;
+    this.menuOpen = !this.menuOpen;
   }
 
   cerrarSesion(): void {
