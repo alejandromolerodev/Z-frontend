@@ -5,6 +5,8 @@ import { CommonModule } from "@angular/common";
 import { Router, RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../services/auth.service";
+import jsPDF from "jspdf";
+import QRCode from "qrcode";
 
 @Component({
   selector: "app-gastos",
@@ -142,6 +144,96 @@ export class GastosComponent implements OnInit {
     alert(
       "👨‍💻 Nombre: Alejandro Molero Torres\n📅 Fecha de creación: 6 de junio de 2025\n\nGracias por utilizar esta plataforma de gestión financiera.\n\nGithub: https://github.com/alejandromolerodev/README.git",
     );
+  }
+
+  async generarPDF(): Promise<void> {
+    if (!this.selectedCuenta) return;
+
+    const cuenta = this.selectedCuenta;
+    const gastos = this.gastos;
+
+    const doc = new jsPDF();
+
+    // Cargar logo
+    const logoImg = new Image();
+    logoImg.src = "assets/zave.png";
+    await new Promise((resolve) => (logoImg.onload = () => resolve(true)));
+
+    // Generar QR
+    const qrData = `Cuenta: ${cuenta.nombre}\nTipo: ${cuenta.tipo}\nSaldo: ${cuenta.saldo.toFixed(2)}€`;
+    const qrUrl = await QRCode.toDataURL(qrData);
+
+    // === ENCABEZADO ===
+
+    doc.addImage(logoImg, "PNG", 15, 10, 35, 35);
+    doc.addImage(qrUrl, "PNG", 15, 50, 35, 35);
+
+    const tituloX = 60;
+    const tituloY = 65;
+    doc.setFontSize(18);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    doc.text("Registro de Gastos", tituloX, tituloY);
+    const textWidth = doc.getTextWidth("Registro de Gastos");
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.line(tituloX, tituloY + 2, tituloX + textWidth, tituloY + 2);
+
+    // === TABLA DE GASTOS ===
+
+    let y = 95;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setFillColor(230, 230, 250);
+    doc.rect(15, y, 180, 10, "F");
+    doc.setTextColor(0);
+    doc.text("Nº", 18, y + 7);
+    doc.text("Categoría", 30, y + 7);
+    doc.text("Importe (€)", 90, y + 7);
+    doc.text("Fecha", 125, y + 7);
+    doc.text("Descripción", 155, y + 7);
+
+    y += 12;
+    doc.setFont("helvetica", "normal");
+
+    let totalImporte = 0;
+
+    gastos.forEach((gasto, index) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+
+      doc.text(`${index + 1}`, 18, y);
+      doc.text(`${gasto.categoria}`, 30, y);
+      doc.text(`${gasto.importe.toFixed(2)}`, 90, y);
+      doc.text(new Date(gasto.fecha).toLocaleDateString(), 125, y);
+
+      const descripcion = gasto.descripcion || "-";
+      doc.text(
+        descripcion.length > 20
+          ? descripcion.slice(0, 20) + "..."
+          : descripcion,
+        155,
+        y,
+      );
+
+      totalImporte += gasto.importe;
+      y += 8;
+    });
+
+    // === TOTAL ===
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text("Total:   ", 125, y + 10);
+    doc.text(`${totalImporte.toFixed(2)} €`, 180, y + 10, { align: "right" });
+
+    doc.save(`gastos_${cuenta.nombre}.pdf`);
   }
 
   deleteUser(): void {

@@ -518,6 +518,11 @@
             {{ gasto.descripcion }}
           </div>
         </div>
+        <div *ngIf="gastos.length > 0" class="text-center mt-4">
+          <button class="btn btn-purple" (click)="generarPDF()">
+            📄 Descargar historial en PDF
+          </button>
+        </div>
       </div>
     </div>
   </body>
