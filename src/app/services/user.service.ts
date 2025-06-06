@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: "root",
 })
 export class UserService {
-  private apiUrl = "http://192.168.1.48:8080/api/zave/user"; // URL del backend
+  private apiUrl = environment.apiUrl + "/api/zave/user"; // URL del backend
 
   constructor(private http: HttpClient) {}
 
