@@ -11,6 +11,7 @@ import { UserService } from "../services/user.service";
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: "./crear-cuenta.component.html",
+  styleUrls: ["./crear-cuenta.component.css"],
 })
 export class CrearCuentaComponent implements OnInit {
   crearCuentaData = {
@@ -90,6 +91,11 @@ export class CrearCuentaComponent implements OnInit {
       return;
     }
 
+    if (!this.crearCuentaData.tipo || this.crearCuentaData.tipo.trim() === "") {
+      alert("El tipo de cuenta es obligatorio y no puede estar vacío.");
+      return;
+    }
+
     this.cuentaService.crearCuenta(userId, this.crearCuentaData).subscribe({
       next: () => {
         alert("Cuenta creada exitosamente");
@@ -104,6 +110,14 @@ export class CrearCuentaComponent implements OnInit {
 
   editarCuenta(): void {
     if (!this.cuentaSeleccionadaId) return;
+
+    if (
+      !this.editarCuentaData.tipo ||
+      this.editarCuentaData.tipo.trim() === ""
+    ) {
+      alert("El tipo de cuenta es obligatorio y no puede estar vacío.");
+      return;
+    }
 
     this.cuentaService
       .editarCuenta(this.cuentaSeleccionadaId, this.editarCuentaData)

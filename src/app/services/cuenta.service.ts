@@ -68,6 +68,6 @@ export class CuentaService {
 
   // editar cuenta
   editarCuenta(cuentaId: number, datos: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/cuentas/${cuentaId}`, datos);
+    return this.http.put(`${this.apiUrl}/cuenta/${cuentaId}`, datos);
   }
 }

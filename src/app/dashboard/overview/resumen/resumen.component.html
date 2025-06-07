@@ -385,7 +385,8 @@
       </div>
 
       <!-- Botones para mostrar formularios -->
-      <div class="card p-3 card-morada shadow-sm">
+      <!-- Botones para mostrar formularios SOLO si hay cuenta seleccionada -->
+      <div *ngIf="selectedCuenta" class="card p-3 card-morada shadow-sm">
         <div class="d-flex gap-2">
           <button
             (click)="toggleFormularioIngreso()"

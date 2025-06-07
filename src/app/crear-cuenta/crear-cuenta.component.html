@@ -105,7 +105,14 @@
               required
               maxlength="30"
               placeholder="Ej: Ahorro, Corriente"
+              #tipoCtrl="ngModel"
             />
+            <div
+              *ngIf="tipoCtrl.invalid && (tipoCtrl.dirty || tipoCtrl.touched)"
+              class="text-danger small"
+            >
+              El tipo de cuenta es obligatorio.
+            </div>
           </div>
           <div class="mb-3">
             <label for="saldo" class="form-label">Saldo Inicial</label>
@@ -172,7 +179,19 @@
               [(ngModel)]="editarCuentaData.tipo"
               name="tipoEditar"
               required
+              maxlength="30"
+              placeholder="Ej: Ahorro, Corriente"
+              #tipoEditarCtrl="ngModel"
             />
+            <div
+              *ngIf="
+                tipoEditarCtrl.invalid &&
+                (tipoEditarCtrl.dirty || tipoEditarCtrl.touched)
+              "
+              class="text-danger small"
+            >
+              El tipo de cuenta es obligatorio.
+            </div>
           </div>
           <div class="mb-3">
             <label for="saldoEditar" class="form-label">Saldo</label>
