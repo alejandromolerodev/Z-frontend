@@ -1,0 +1,317 @@
+.navbar {
+  height: 90px;
+  background: linear-gradient(to right, white, #6f42c1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  width: 100%;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand img {
+  height: 70px;
+  margin-right: 12px;
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+  transform: scale(1.05);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+}
+
+.nav-hover {
+  position: relative;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  padding: 8px 0;
+}
+
+.nav-hover::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #6f42c1;
+  visibility: hidden;
+  transform: scaleX(0);
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-hover:hover::after {
+  visibility: visible;
+  transform: scaleX(1);
+}
+
+.text-purple {
+  color: #6f42c1 !important;
+}
+
+.navbar-collapse {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.navbar-collapse.collapse:not(.show) {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .navbar-collapse.collapse {
+    display: flex !important;
+    flex-basis: auto;
+  }
+  .navbar-nav {
+    gap: 15px;
+  }
+}
+
+body {
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 900px;
+  margin: 90px auto 20px;
+  padding: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 110px);
+}
+
+.card-morada {
+  background-color: #e6ddf3 !important;
+  color: #2e1e4d;
+  border-color: #d0c0e8 !important;
+}
+
+/* Estilos adicionales para botones */
+.btn {
+  transition: all 0.3s ease;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Estilos para filtros */
+.filtros-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.btn-purple {
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-purple:hover {
+  background-color: #5a32a8;
+  border-color: #5a32a8;
+  transform: translateY(-2px);
+}
+
+/* Estilos para lista de ingresos */
+.ingreso-card {
+  background-color: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.ingreso-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ingreso-categoria {
+  font-weight: 600;
+  color: #2e7d32;
+  font-size: 1.1rem;
+}
+
+.ingreso-importe {
+  font-weight: 700;
+  color: #2e7d32;
+  font-size: 1.2rem;
+}
+
+.ingreso-fecha {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.ingreso-descripcion {
+  color: #495057;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.alert-info {
+  background-color: #e3f2fd;
+  border-color: #b8daff;
+  color: #004085;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.custom-toggler {
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+}
+
+/* Barras del toggler */
+.toggler-bar {
+  width: 28px;
+  height: 3px;
+  background-color: #6f42c1; /* Color morado original */
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+  display: none;
+}
+
+/* Cambiar color y añadir brillo en hover (normal o activo) */
+.custom-toggler:hover .toggler-bar,
+.custom-toggler.is-active .toggler-bar {
+  background-color: white;
+  filter: drop-shadow(0 0 5px white);
+}
+
+/* Animaciones para la X cuando está activo */
+.custom-toggler.is-active .bar1 {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.custom-toggler.is-active .bar2 {
+  opacity: 0;
+}
+
+.custom-toggler.is-active .bar3 {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+/* Estilos responsive para móvil - Corregidos */
+@media (max-width: 991.98px) {
+  .toggler-bar {
+    display: flex;
+  }
+  .navbar {
+    padding: 15px 20px;
+  }
+
+  .navbar-collapse {
+    position: fixed;
+    top: 90px;
+    left: 0;
+    right: 0;
+    z-index: 1020;
+    padding: 20px;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.98),
+      rgba(111, 66, 193, 0.98)
+    );
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .container {
+    margin-top: 90px;
+    padding-top: 20px;
+    height: calc(100vh - 90px);
+  }
+
+  .navbar-nav {
+    gap: 12px;
+    align-items: flex-start !important;
+  }
+
+  .nav-item {
+    margin: 8px 0 !important;
+    width: 100%;
+  }
+
+  .nav-link,
+  .btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px 15px !important;
+    font-size: 1rem;
+    border-radius: 6px;
+  }
+
+  .navbar-brand img {
+    height: 70px;
+    margin-top: -8px;
+  }
+
+  .btn-outline-light,
+  .btn-outline-info {
+    border-width: 2px;
+  }
+
+  .filtros-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Efecto brillante en botones y links del menú */
+.nav-link.nav-hover,
+.btn {
+  transition:
+    all 0.3s ease,
+    filter 0.3s ease;
+}
+
+.nav-link.nav-hover:hover,
+.nav-link.nav-hover:focus,
+.btn:hover,
+.btn:focus {
+  filter: drop-shadow(0 0 5px white);
+  color: white !important;
+  text-shadow: 0 0 5px white;
+}
+
+/* Para que el color no cambie en modo activo, si quieres */
+.nav-link.nav-hover.is-active,
+.btn.is-active {
+  filter: drop-shadow(0 0 5px white);
+  color: white !important;
+  text-shadow: 0 0 5px white;
+}
+
+.btn-outline-light {
+  background-color: transparent !important;
+  color: white !important;
+  border-color: white !important;
+}
+
+.btn-outline-light:hover,
+.btn-outline-light:focus {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border-color: white !important;
+}
