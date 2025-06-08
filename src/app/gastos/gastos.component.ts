@@ -16,15 +16,20 @@ import QRCode from "qrcode";
   styleUrls: ["./gastos.component.css"],
 })
 export class GastosComponent implements OnInit {
+  // Estado del menú
   isMenuCollapsed = true;
+  menuOpen = false;
+
+  // Usuario y cuentas
   usuarioNombre: string = "";
   cuentas: any[] = [];
   selectedCuenta: any = null;
+
+  // Lista de gastos y orden
   gastos: any[] = [];
   ordenFecha: "asc" | "desc" = "desc";
-  menuOpen = false;
 
-  // Campos para gasto
+  // Formulario de nuevo gasto
   nuevoGasto: number = 0;
   gastoCategoria: string = "";
   gastoDescripcion: string = "";
@@ -37,6 +42,7 @@ export class GastosComponent implements OnInit {
     private router: Router,
   ) {}
 
+  // Se ejecuta al iniciar el componente
   ngOnInit(): void {
     const userId = parseInt(localStorage.getItem("userId") || "0", 10);
 
@@ -56,6 +62,7 @@ export class GastosComponent implements OnInit {
     }
   }
 
+  // Carga las cuentas del usuario
   cargarCuentasUsuario(userId: number): void {
     this.cuentaService.getCuentasUsuario(userId).subscribe(
       (data) => {
@@ -71,6 +78,7 @@ export class GastosComponent implements OnInit {
     );
   }
 
+  // Carga los gastos de una cuenta
   cargarGastos(cuentaId: number): void {
     this.cuentaService.getGastosDeCuenta(cuentaId).subscribe(
       (data) => {
@@ -83,11 +91,13 @@ export class GastosComponent implements OnInit {
     );
   }
 
+  // Cambia la cuenta seleccionada
   onCuentaSeleccionada(cuenta: any): void {
     this.selectedCuenta = cuenta;
     this.cargarGastos(cuenta.id);
   }
 
+  // Ordena los gastos por fecha
   ordenarPorFecha(orden: "asc" | "desc"): void {
     this.ordenFecha = orden;
     this.gastos.sort((a, b) => {
@@ -97,6 +107,7 @@ export class GastosComponent implements OnInit {
     });
   }
 
+  // Agrega un nuevo gasto a la cuenta
   agregarGasto(): void {
     if (
       this.selectedCuenta &&
@@ -116,7 +127,7 @@ export class GastosComponent implements OnInit {
         .subscribe(
           () => {
             this.cargarGastos(this.selectedCuenta.id);
-            // Resetear formulario
+            // Limpia el formulario
             this.nuevoGasto = 0;
             this.gastoCategoria = "";
             this.gastoDescripcion = "";
@@ -127,10 +138,12 @@ export class GastosComponent implements OnInit {
     }
   }
 
+  // Muestra u oculta el menú
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
+  // Cierra la sesión del usuario
   cerrarSesion(): void {
     const confirmacion = confirm("¿Estás seguro que quieres cerrar sesión?");
     if (confirmacion) {
@@ -140,12 +153,14 @@ export class GastosComponent implements OnInit {
     }
   }
 
+  // Muestra información del desarrollador
   mostrarInfoCreador(): void {
     alert(
       "👨‍💻 Nombre: Alejandro Molero Torres\n📅 Fecha de creación: 6 de junio de 2025\n\nGracias por utilizar esta plataforma de gestión financiera.\n\nGithub: https://github.com/alejandromolerodev/README.git",
     );
   }
 
+  // Genera un PDF con la información de los gastos
   async generarPDF(): Promise<void> {
     if (!this.selectedCuenta) return;
 
@@ -154,17 +169,16 @@ export class GastosComponent implements OnInit {
 
     const doc = new jsPDF();
 
-    // Cargar logo
+    // Carga el logo
     const logoImg = new Image();
     logoImg.src = "assets/zave.png";
     await new Promise((resolve) => (logoImg.onload = () => resolve(true)));
 
-    // Generar QR
+    // Genera un código QR con los datos de la cuenta
     const qrData = `Cuenta: ${cuenta.nombre}\nTipo: ${cuenta.tipo}\nSaldo: ${cuenta.saldo.toFixed(2)}€`;
     const qrUrl = await QRCode.toDataURL(qrData);
 
-    // === ENCABEZADO ===
-
+    // === Encabezado del PDF ===
     doc.addImage(logoImg, "PNG", 15, 10, 35, 35);
     doc.addImage(qrUrl, "PNG", 15, 50, 35, 35);
 
@@ -179,8 +193,7 @@ export class GastosComponent implements OnInit {
     doc.setLineWidth(0.5);
     doc.line(tituloX, tituloY + 2, tituloX + textWidth, tituloY + 2);
 
-    // === TABLA DE GASTOS ===
-
+    // === Tabla de gastos ===
     let y = 95;
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
@@ -198,6 +211,7 @@ export class GastosComponent implements OnInit {
 
     let totalImporte = 0;
 
+    // Rellena las filas con los gastos
     gastos.forEach((gasto, index) => {
       if (y > 270) {
         doc.addPage();
@@ -222,7 +236,7 @@ export class GastosComponent implements OnInit {
       y += 8;
     });
 
-    // === TOTAL ===
+    // === Total del PDF ===
     if (y > 270) {
       doc.addPage();
       y = 20;
@@ -233,9 +247,11 @@ export class GastosComponent implements OnInit {
     doc.text("Total:   ", 125, y + 10);
     doc.text(`${totalImporte.toFixed(2)} €`, 180, y + 10, { align: "right" });
 
+    // Guarda el archivo PDF
     doc.save(`gastos_${cuenta.nombre}.pdf`);
   }
 
+  // Elimina la cuenta del usuario permanentemente
   deleteUser(): void {
     try {
       const userId = parseInt(localStorage.getItem("userId") || "0", 10);
@@ -252,7 +268,7 @@ export class GastosComponent implements OnInit {
         this.userService.deleteUser(userId).subscribe({
           next: () => {
             this.authService.logout();
-            localStorage.clear(); // Limpia todo el localStorage por seguridad
+            localStorage.clear(); // Limpia el almacenamiento
             this.router.navigate(["/login"]);
           },
           error: (err) => {

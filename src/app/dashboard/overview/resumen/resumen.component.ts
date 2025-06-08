@@ -57,6 +57,7 @@ export class ResumenComponent implements OnInit {
     private router: Router,
   ) {}
 
+  // Al iniciar el componente, se carga la información del usuario y sus cuentas
   ngOnInit(): void {
     const userId = parseInt(localStorage.getItem("userId") || "0", 10);
 
@@ -76,6 +77,7 @@ export class ResumenComponent implements OnInit {
     }
   }
 
+  // Carga las cuentas del usuario y selecciona la primera
   cargarCuentasUsuario(userId: number): void {
     this.cuentaService.getCuentasUsuario(userId).subscribe(
       (data) => {
@@ -91,6 +93,7 @@ export class ResumenComponent implements OnInit {
     );
   }
 
+  // Obtiene ingresos, gastos y saldo de una cuenta específica
   cargarIngresosYGastos(cuentaId: number): void {
     forkJoin({
       ingresos: this.cuentaService.getIngresosDeCuenta(cuentaId),
@@ -123,6 +126,7 @@ export class ResumenComponent implements OnInit {
     );
   }
 
+  // Genera alertas personalizadas según el estado financiero
   actualizarAlertas(): void {
     this.alertas = [];
 
@@ -179,6 +183,7 @@ export class ResumenComponent implements OnInit {
     }
   }
 
+  // Dibuja el gráfico de resumen financiero
   dibujarGrafica(): void {
     const ctx = document.getElementById("graficaResumen") as HTMLCanvasElement;
     if (this.chart) {
@@ -231,24 +236,29 @@ export class ResumenComponent implements OnInit {
     });
   }
 
+  // Cambia entre gráfico de dona y de barras
   cambiarTipoGrafica(): void {
     this.tipoGrafica = this.tipoGrafica === "doughnut" ? "bar" : "doughnut";
     this.dibujarGrafica();
   }
 
+  // Selecciona otra cuenta y carga su información
   onCuentaSeleccionada(cuenta: any): void {
     this.selectedCuenta = cuenta;
     this.cargarIngresosYGastos(cuenta.id);
   }
 
+  // Muestra/oculta el formulario de ingreso
   toggleFormularioIngreso(): void {
     this.mostrarFormularioIngreso = !this.mostrarFormularioIngreso;
   }
 
+  // Muestra/oculta el formulario de gastos
   toggleFormularioGasto(): void {
     this.mostrarFormularioGasto = !this.mostrarFormularioGasto;
   }
 
+  // Actualiza el saldo de una cuenta específica
   actualizarSaldo(cuentaId: number): void {
     this.cuentaService.getSaldoDeCuenta(cuentaId).subscribe(
       (nuevoSaldo) => {
@@ -264,6 +274,7 @@ export class ResumenComponent implements OnInit {
     );
   }
 
+  // Agrega un nuevo gasto a la cuenta seleccionada
   agregarGasto(): void {
     if (
       this.selectedCuenta &&
@@ -301,6 +312,7 @@ export class ResumenComponent implements OnInit {
     }
   }
 
+  // Agrega un nuevo ingreso a la cuenta seleccionada
   agregarIngreso(): void {
     if (
       this.selectedCuenta &&
@@ -338,10 +350,12 @@ export class ResumenComponent implements OnInit {
     }
   }
 
+  // Navega a la página para crear una cuenta nueva
   irACrearCuenta(): void {
     this.router.navigate(["/crear-cuenta"]);
   }
 
+  // Cierra la sesión del usuario
   cerrarSesion(): void {
     const confirmacion = confirm("¿Estás seguro que quieres cerrar sesión?");
     if (confirmacion) {
@@ -351,12 +365,14 @@ export class ResumenComponent implements OnInit {
     }
   }
 
+  // Muestra un mensaje con información del creador
   mostrarInfoCreador(): void {
     alert(
       "👨‍💻 Nombre: Alejandro Molero Torres\n📅 Fecha de creación: 6 de junio de 2025\n\nGracias por utilizar esta plataforma de gestión financiera.\n\nGithub: https://github.com/alejandromolerodev/README.git",
     );
   }
 
+  // Elimina la cuenta del usuario actual permanentemente
   deleteUser(): void {
     try {
       const userId = parseInt(localStorage.getItem("userId") || "0", 10);
@@ -390,6 +406,7 @@ export class ResumenComponent implements OnInit {
     }
   }
 
+  // Elimina una cuenta específica del usuario
   eliminarCuenta(cuentaId: number): void {
     if (
       confirm(
@@ -425,6 +442,7 @@ export class ResumenComponent implements OnInit {
     }
   }
 
+  // Muestra/oculta el menú de navegación
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }

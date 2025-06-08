@@ -16,15 +16,20 @@ import QRCode from "qrcode";
   styleUrls: ["./ingresos.component.css"],
 })
 export class IngresosComponent implements OnInit {
+  // Estado del menú
   isMenuCollapsed = true;
+  menuOpen = false;
+
+  // Usuario y cuentas
   usuarioNombre: string = "";
   cuentas: any[] = [];
   selectedCuenta: any = null;
+
+  // Lista de ingresos y orden
   ingresos: any[] = [];
   ordenFecha: "asc" | "desc" = "desc";
-  menuOpen = false;
 
-  // Campos para ingreso
+  // Formulario de nuevo ingreso
   nuevoIngreso: number = 0;
   ingresoCategoria: string = "";
   ingresoDescripcion: string = "";
@@ -37,12 +42,14 @@ export class IngresosComponent implements OnInit {
     private router: Router,
   ) {}
 
+  // Ejecutado al cargar el componente
   ngOnInit(): void {
     const userId = parseInt(localStorage.getItem("userId") || "0", 10);
 
     if (userId) {
       this.cargarCuentasUsuario(userId);
 
+      // Obtener el nombre del usuario
       this.userService.getUserNameFromBackend(userId).subscribe(
         (username) => {
           this.usuarioNombre = username;
@@ -56,6 +63,7 @@ export class IngresosComponent implements OnInit {
     }
   }
 
+  // Carga las cuentas asociadas al usuario
   cargarCuentasUsuario(userId: number): void {
     this.cuentaService.getCuentasUsuario(userId).subscribe(
       (data) => {
@@ -71,6 +79,7 @@ export class IngresosComponent implements OnInit {
     );
   }
 
+  // Carga los ingresos de una cuenta
   cargarIngresos(cuentaId: number): void {
     this.cuentaService.getIngresosDeCuenta(cuentaId).subscribe(
       (data) => {
@@ -83,11 +92,13 @@ export class IngresosComponent implements OnInit {
     );
   }
 
+  // Al seleccionar una cuenta distinta
   onCuentaSeleccionada(cuenta: any): void {
     this.selectedCuenta = cuenta;
     this.cargarIngresos(cuenta.id);
   }
 
+  // Ordena ingresos por fecha (ascendente o descendente)
   ordenarPorFecha(orden: "asc" | "desc"): void {
     this.ordenFecha = orden;
     this.ingresos.sort((a, b) => {
@@ -97,6 +108,7 @@ export class IngresosComponent implements OnInit {
     });
   }
 
+  // Agrega un nuevo ingreso a la cuenta seleccionada
   agregarIngreso(): void {
     if (
       this.selectedCuenta &&
@@ -116,7 +128,7 @@ export class IngresosComponent implements OnInit {
         .subscribe(
           () => {
             this.cargarIngresos(this.selectedCuenta.id);
-            // Resetear formulario
+            // Limpia el formulario
             this.nuevoIngreso = 0;
             this.ingresoCategoria = "";
             this.ingresoDescripcion = "";
@@ -127,10 +139,12 @@ export class IngresosComponent implements OnInit {
     }
   }
 
+  // Muestra/oculta el menú lateral
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
+  // Cierra la sesión del usuario
   cerrarSesion(): void {
     const confirmacion = confirm("¿Estás seguro que quieres cerrar sesión?");
     if (confirmacion) {
@@ -140,12 +154,14 @@ export class IngresosComponent implements OnInit {
     }
   }
 
+  // Muestra info del desarrollador
   mostrarInfoCreador(): void {
     alert(
       "👨‍💻 Nombre: Alejandro Molero Torres\n📅 Fecha de creación: 6 de junio de 2025\n\nGracias por utilizar esta plataforma de gestión financiera.\n\nGithub: https://github.com/alejandromolerodev/README.git",
     );
   }
 
+  // Genera un PDF con el registro de ingresos
   async generarPDF(): Promise<void> {
     if (!this.selectedCuenta) return;
 
@@ -154,17 +170,16 @@ export class IngresosComponent implements OnInit {
 
     const doc = new jsPDF();
 
-    // Cargar logo
+    // Carga el logo
     const logoImg = new Image();
     logoImg.src = "assets/zave.png";
     await new Promise((resolve) => (logoImg.onload = () => resolve(true)));
 
-    // Generar QR
+    // Crea código QR con info de la cuenta
     const qrData = `Cuenta: ${cuenta.nombre}\nTipo: ${cuenta.tipo}\nSaldo: ${cuenta.saldo.toFixed(2)}€`;
     const qrUrl = await QRCode.toDataURL(qrData);
 
-    // === ENCABEZADO ===
-
+    // === Encabezado del PDF ===
     doc.addImage(logoImg, "PNG", 15, 10, 35, 35);
     doc.addImage(qrUrl, "PNG", 15, 50, 35, 35);
 
@@ -179,8 +194,7 @@ export class IngresosComponent implements OnInit {
     doc.setLineWidth(0.5);
     doc.line(tituloX, tituloY + 2, tituloX + textWidth, tituloY + 2);
 
-    // === TABLA DE INGRESOS ===
-
+    // === Tabla de ingresos ===
     let y = 95;
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
@@ -198,6 +212,7 @@ export class IngresosComponent implements OnInit {
 
     let totalImporte = 0;
 
+    // Itera por los ingresos
     ingresos.forEach((ingreso, index) => {
       if (y > 270) {
         doc.addPage();
@@ -222,7 +237,7 @@ export class IngresosComponent implements OnInit {
       y += 8;
     });
 
-    // === TOTAL ===
+    // === Total acumulado ===
     if (y > 270) {
       doc.addPage();
       y = 20;
@@ -233,9 +248,11 @@ export class IngresosComponent implements OnInit {
     doc.text("Total:   ", 125, y + 10);
     doc.text(`${totalImporte.toFixed(2)} €`, 180, y + 10, { align: "right" });
 
+    // Guarda el PDF
     doc.save(`ingresos_${cuenta.nombre}.pdf`);
   }
 
+  // Elimina permanentemente el usuario y sus datos
   deleteUser(): void {
     try {
       const userId = parseInt(localStorage.getItem("userId") || "0", 10);
@@ -252,7 +269,7 @@ export class IngresosComponent implements OnInit {
         this.userService.deleteUser(userId).subscribe({
           next: () => {
             this.authService.logout();
-            localStorage.clear(); // Limpia todo el localStorage por seguridad
+            localStorage.clear(); // Seguridad adicional
             this.router.navigate(["/login"]);
           },
           error: (err) => {

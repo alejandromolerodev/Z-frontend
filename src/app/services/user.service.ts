@@ -7,16 +7,27 @@ import { environment } from "../../environments/environment";
   providedIn: "root",
 })
 export class UserService {
-  private apiUrl = environment.apiUrl + "/api/zave/user"; // URL del backend
+  private apiUrl = environment.apiUrl + "/api/zave/user"; // Base URL backend
 
   constructor(private http: HttpClient) {}
 
-  // Login sin validación de token
+  /**
+   * Realiza login enviando email y password al backend
+   * @param email string
+   * @param password string
+   * @returns Observable con la respuesta del servidor
+   */
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password });
   }
 
-  // Registro sin validación de seguridad
+  /**
+   * Registra un nuevo usuario con email, password y nombre
+   * @param email string
+   * @param password string
+   * @param nombre string
+   * @returns Observable con la respuesta del servidor
+   */
   register(email: string, password: string, nombre: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register`, {
       email,
@@ -25,30 +36,47 @@ export class UserService {
     });
   }
 
-  // Método para guardar el userId como número en localStorage después de login o registro
+  /**
+   * Guarda el ID del usuario en localStorage
+   * @param userId number
+   */
   setUserData(userId: number): void {
-    localStorage.setItem("userId", userId.toString()); // Guarda como string, pero es un número
+    localStorage.setItem("userId", userId.toString());
   }
 
-  // Método para verificar si el usuario está autenticado
+  /**
+   * Verifica si hay un usuario autenticado
+   * @returns boolean
+   */
   isAuthenticated(): boolean {
-    const userId = localStorage.getItem("userId");
-    return userId !== null;
+    return localStorage.getItem("userId") !== null;
   }
 
-  // Método para obtener el userId como número
+  /**
+   * Obtiene el ID del usuario desde localStorage como número
+   * @returns number | null
+   */
   getUserData(): number | null {
     const userId = localStorage.getItem("userId");
     return userId ? Number(userId) : null;
   }
 
+  /**
+   * Consulta el nombre del usuario desde backend según su ID
+   * @param userId number
+   * @returns Observable<string> con el nombre del usuario
+   */
   getUserNameFromBackend(userId: number): Observable<string> {
     return this.http.get(`${this.apiUrl}/username/${userId}`, {
       responseType: "text",
     });
   }
 
-  // En user.service.ts
+  /**
+   * Elimina un usuario de backend según su ID
+   * @param userId number
+   * @returns Observable con la respuesta del servidor
+   */
   deleteUser(userId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/id/${userId}`);
   }
